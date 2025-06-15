@@ -12,8 +12,10 @@ public class PlayerBehaviour : MonoBehaviour
     // Flag to check if the player can interact with objects
     bool canInteract = false;
     // Stores the current coin object the player has detected
+    bool hasKey = false;
     CrystalBehaviour currentCrystal = null;
     DoorBehaviour currentDoor = null;
+    Key currentKey = null;
 
     bool doorClosed = true;
 
@@ -46,47 +48,67 @@ public class PlayerBehaviour : MonoBehaviour
     //WEEK 4
     // The Interact callback for the Interact Input Action
     // This method is called when the player presses the interact button
+// The Interact callback for the Interact Input Action
+// This method is called when the player presses the interact button
     void OnInteract()
-    {  
-                {
-            Debug.Log("Interacting with object");
-
-        }
+    {
+        Debug.Log("Interacting with object");
         // Check if the player can interact with objects
         if (canInteract)
         {
-
-            // Check if the player has detected a obj or a door
+            // Check if the player has detected an obj or a door
             if (currentCrystal != null)
             {
                 Debug.Log("Interacting with coin");
-                // Call the Collect method on the  object
+                // Call the Collect method on the object
                 // Pass the player object as an argument
                 currentCrystal.Collect(this);
             }
-            else if (currentDoor != null) //WEEK 5
+            else if (currentKey != null) // Interact with the key
+            {
+                Debug.Log("Interacting with key");
+                // Call the Collect method on the key
+                currentKey.Collect(this);
+            }
+            else if (currentDoor != null) // WEEK 5
             {
                 Debug.Log("Interacting with door");
+
+                if (currentDoor.isLocked)
+                {
+                    if (hasKey)
+                    {
+                        currentDoor.Unlock();
+                        Debug.Log("Door unlocked!");
+                    }
+                    else
+                    {
+                        Debug.Log("Door is locked. Key required.");
+                        return;
+                    }
+                }
 
                 if (doorClosed == true)
                 {
                     currentDoor.Open();       // Opens the door
                     Debug.Log("Door open!");
-                    doorClosed = false;       // Updates flag
+                    doorClosed = false;
                 }
                 else
                 {
                     currentDoor.Close();      // Closes the door
                     Debug.Log("Door closed!");
-                    doorClosed = true;        // Updates flag
+                    doorClosed = true;
                 }
             }
         }
     }
-
-
-
-
+    // Method to allow player to pick up a key
+    public void PickupKey()
+    {
+        hasKey = true;
+        Debug.Log("Player picked up the key!");
+    }
 
 
     //WEEK 3
@@ -152,8 +174,8 @@ public class PlayerBehaviour : MonoBehaviour
         // Check if the player detects a trigger collider tagged as "Collectible" or "Door"
         if (other.CompareTag("Collectible"))
         {
-            // Set the canInteract flag to true
-            // Get the CoinBehaviour component from the detected object
+        // Set the canInteract flag to true
+        // Get the CoinBehaviour component from the detected object
             canInteract = true;
             currentCrystal = other.GetComponent<CrystalBehaviour>();
         }
@@ -161,6 +183,11 @@ public class PlayerBehaviour : MonoBehaviour
         {
             canInteract = true;
             currentDoor = other.GetComponent<DoorBehaviour>();
+        }
+        else if (other.CompareTag("Key")) 
+        {
+            canInteract = true;
+            currentKey = other.GetComponent<Key>();
         }
     }
 
@@ -180,6 +207,25 @@ public class PlayerBehaviour : MonoBehaviour
                 currentCrystal = null;
             }
         }
+        else if (currentDoor != null)
+        {
+            if (other.gameObject == currentDoor.gameObject)
+            {
+                canInteract = false;
+                currentDoor.Close();
+                doorClosed = true;
+                currentDoor = null;
+            }
+        }
+        else if (currentKey != null)
+        {
+            if (other.gameObject == currentKey.gameObject)
+            {
+                canInteract = false;
+                currentKey = null;
+            }
+        }
+
     }
 
     void Update()
