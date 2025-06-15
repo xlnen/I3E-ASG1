@@ -1,0 +1,17 @@
+{
+	"folders": [
+		{
+			"path": "../../demos"
+		}
+	],
+	"settings": {
+		"files.associations": {
+			"*.asset": "yaml",
+			"*.meta": "yaml",
+			"*.prefab": "yaml",
+			"*.unity": "yaml"
+		},
+		"dotnet.defaultSolution": "demos.sln",
+		"git.ignoreLimitWarning": true
+	}
+}
