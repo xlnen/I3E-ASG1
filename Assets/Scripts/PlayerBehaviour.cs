@@ -9,7 +9,7 @@ public class PlayerBehaviour : MonoBehaviour
     public int currentHealth = 100;    // Player's current score
 
     int currentScore = 0;
-    // Flag to check if the player can interact with objects
+    // check if the player can interact with objects
     bool canInteract = false;
     // Stores the current coin object the player has detected
     bool hasKey = false;
@@ -19,35 +19,32 @@ public class PlayerBehaviour : MonoBehaviour
 
     bool doorClosed = true;
 
+    [SerializeField]
+    UnityEngine.UI.Text scoreText;
+    [SerializeField] UnityEngine.UI.Text healthText;
 
 
+    [SerializeField] UnityEngine.UI.Text collectiblesLeftText;
+    [SerializeField] int totalCollectibles = 5; 
 
     [SerializeField]
     GameObject Projectile;
 
-    [SerializeField]
-    UnityEngine.UI.Text debuffText;
+    [SerializeField] UnityEngine.UI.Text congratsText;
 
-    //    [SerializeField]
-    //    Transform spawnPoint;
 
     [SerializeField]
     float fireStrength = 0f;
 
     [SerializeField]
     float interactionDistance = 5f;
+    
+    private Vector3 startPosition;
 
-    //WEEK 6
-    //    void OnFire()
-    //    {
-    //        GameObject newProjectile = Instantiate(Projectile, spawnPoint.position, spawnPoint.rotation);
-
-    //        Vector3 fireForce = spawnPoint.forward * fireStrength;
-
-    //        newProjectile.GetComponent<Rigidbody>().AddForce(fireForce);
-    //    }
-
-
+    void Start()
+    {
+        startPosition = transform.position; // Save initial spawn position
+    }
 
     //WEEK 4
     // The Interact callback for the Interact Input Action
@@ -114,7 +111,17 @@ public class PlayerBehaviour : MonoBehaviour
         Debug.Log("Player picked up the key!");
     }
 
+    void Respawn()
+    {
+        // Reset health to max
+        currentHealth = maxHealth;
+        if (healthText != null)
+            healthText.text = "Health: " + currentHealth;
 
+    transform.position = startPosition; // Move player back to starting position
+
+    Debug.Log("Player respawned.");
+    }
     //WEEK 3
 
     // Method to modify the player's score
@@ -123,10 +130,27 @@ public class PlayerBehaviour : MonoBehaviour
     // The method is public so it can be accessed from other scripts
     public void ModifyScore(int amt)
     {
-        // Increase currentScore by the amount passed as an argument
         currentScore += amt;
-    }
 
+        if (scoreText != null)
+        {
+            scoreText.text = "Score: " + currentScore;
+
+        }
+        
+        if (healthText != null)
+        {
+            healthText.text = "Health: " + currentHealth;
+        }
+
+        // Update remaining collectibles UI
+        collectiblesLeftText.text = "Collectibles Left: " + (totalCollectibles - currentScore);
+
+        if (currentScore >= totalCollectibles)
+        {
+            congratsText.enabled = true; // Show Congratulations UI
+        }
+    }
 
 
     //WEEK 3
@@ -139,36 +163,26 @@ public class PlayerBehaviour : MonoBehaviour
     {
         currentHealth += amount;
 
-        if (currentHealth > maxHealth)
+        if (currentHealth > maxHealth) currentHealth = maxHealth;
+        if (currentHealth < 0) currentHealth = 0;
+
+        if (healthText != null)
         {
-            currentHealth = maxHealth;
+            healthText.text = "Health: " + currentHealth;
         }
 
-        if (currentHealth < 0)
+        if (scoreText != null)
         {
-            currentHealth = 0;
+            scoreText.text = "Score: " + currentScore;
+        }
+
+        if (currentHealth == 0)
+        {
+            Respawn();
         }
 
         Debug.Log("Current Health: " + currentHealth);
     }
-
-
-
-
-    /* WEEK 3
-        // Collision Callback for when the player collides with another object
-        void OnCollisionStay(Collision collision)
-        {
-            // Check if the player collides with an object tagged as "HealingArea"
-            // If it does, call the RecoverHealth method on the object
-            // Pass the player object as an argument
-            // This allows the player to recover health when in a healing area
-            if (collision.gameObject.CompareTag("HealingArea"))
-            {
-                collision.gameObject.GetComponent<RecoveryBehaviour>().RecoverHealth(this);
-            }
-        }
-        */
 
 
 
@@ -223,8 +237,6 @@ public class PlayerBehaviour : MonoBehaviour
 
         }
     }
-
-        // TODO: Add other update logic here (movement, firing, etc.)
     
 
             //        RaycastHit hitInfo;
