@@ -25,7 +25,7 @@ public class PlayerBehaviour : MonoBehaviour
 
 
     [SerializeField] UnityEngine.UI.Text collectiblesLeftText;
-    [SerializeField] int totalCollectibles = 5; 
+    [SerializeField] int totalCollectibles = 5;
 
     [SerializeField]
     GameObject Projectile;
@@ -38,7 +38,7 @@ public class PlayerBehaviour : MonoBehaviour
 
     [SerializeField]
     float interactionDistance = 5f;
-    
+
     private Vector3 startPosition;
 
     void Start()
@@ -118,9 +118,9 @@ public class PlayerBehaviour : MonoBehaviour
         if (healthText != null)
             healthText.text = "Health: " + currentHealth;
 
-    transform.position = startPosition; // Move player back to starting position
+        transform.position = startPosition; // Move player back to starting position
 
-    Debug.Log("Player respawned.");
+        Debug.Log("Player respawned.");
     }
     //WEEK 3
 
@@ -137,7 +137,7 @@ public class PlayerBehaviour : MonoBehaviour
             scoreText.text = "Score: " + currentScore;
 
         }
-        
+
         if (healthText != null)
         {
             healthText.text = "Health: " + currentHealth;
@@ -166,10 +166,6 @@ public class PlayerBehaviour : MonoBehaviour
         if (currentHealth > maxHealth) currentHealth = maxHealth;
         if (currentHealth < 0) currentHealth = 0;
 
-        if (healthText != null)
-        {
-            healthText.text = "Health: " + currentHealth;
-        }
 
         if (scoreText != null)
         {
@@ -234,39 +230,84 @@ public class PlayerBehaviour : MonoBehaviour
 
     void Update()
     {
+        RaycastHit hitInfo;
+        Debug.DrawRay(Camera.main.transform.position, Camera.main.transform.forward * interactionDistance, Color.red);
 
+        if (Physics.Raycast(Camera.main.transform.position, Camera.main.transform.forward, out hitInfo, interactionDistance))
+        {
+            Debug.Log("Raycast hit: " + hitInfo.collider.gameObject.name);
+
+            if (hitInfo.collider.gameObject.CompareTag("Collectible"))
+            {
+                if (currentCrystal != null)
+                {
+                    currentCrystal.Unhighlight();
+                }
+
+                canInteract = true;
+                currentCrystal = hitInfo.collider.gameObject.GetComponent<CrystalBehaviour>();
+                currentCrystal.Highlight();
+
+                if (currentKey != null)
+                {
+                    currentKey.Unhighlight();
+                    currentKey = null;
+                }
+            }
+            else if (hitInfo.collider.gameObject.CompareTag("Key"))
+            {
+                if (currentKey != null)
+                {
+                    currentKey.Unhighlight();
+                }
+
+                canInteract = true;
+                currentKey = hitInfo.collider.gameObject.GetComponent<Key>();
+                currentKey.Highlight();
+
+                // Reset crystal highlight
+                if (currentCrystal != null)
+                {
+                    currentCrystal.Unhighlight();
+                    currentCrystal = null;
+                }
+            }
+            else
+            {
+                // Not a collectible or key
+                if (currentCrystal != null)
+                {
+                    currentCrystal.Unhighlight();
+                    currentCrystal = null;
+                }
+
+                if (currentKey != null)
+                {
+                    currentKey.Unhighlight();
+                    currentKey = null;
+                }
+
+                canInteract = false;
+            }
+        }
+        else
+        {
+            // Nothing hit
+            if (currentCrystal != null)
+            {
+                currentCrystal.Unhighlight();
+                currentCrystal = null;
+            }
+
+            if (currentKey != null)
+            {
+                currentKey.Unhighlight();
+                currentKey = null;
+            }
+
+            canInteract = false;
         }
     }
-    
-
-            //        RaycastHit hitInfo;
-            //        Debug.DrawRay(spawnPoint.position, spawnPoint.forward * interactionDistance, Color.red);
-            //        if (Physics.Raycast(spawnPoint.position, spawnPoint.forward, out hitInfo, interactionDistance))
-            //        {
-            //Debug.Log("Raycast hit: " + hitInfo.collider.gameObject.name);
-            //            if (hitInfo.collider.gameObject.CompareTag("Collectible"))
-            //            {
-            //                if (currentCoin != null)
-            //                {
-            //                    currentCoin.Unhighlight();
-            //                }
-
-            //                canInteract = true;
-            //                currentCoin = hitInfo.collider.gameObject.GetComponent<CoinBehaviour>();
-            //                currentCoin.Highlight();
-
-
-        
-        //        }
-
-        //        else if (currentCoin != null)
-        //        {
-        //            currentCoin.Unhighlight();
-        //            currentCoin = null;
-        //        }
-        //    }
-
-
-    
+}
 
 
