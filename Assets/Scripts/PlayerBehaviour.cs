@@ -1,4 +1,10 @@
 
+/*
+ * Author: Mio
+ * Date: 2025-06-15
+ * Description:  Manages player health, score, interaction with collectibles (crystals and keys) n doors in the game. Handles player input for interaction, UI,
+ * respawning on death, and raycasting interactable objs
+ */
 using UnityEngine;
 
 public class PlayerBehaviour : MonoBehaviour

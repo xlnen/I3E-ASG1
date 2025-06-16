@@ -1,4 +1,10 @@
 
+/*
+ * Author: Mio
+ * Date: 2025-06-15
+ * Description: Handles crystal collectible behaviour including raycasting when near,
+ *              and adding score when obj is collected
+ */
 using UnityEngine;
 
 public class CrystalBehaviour : MonoBehaviour

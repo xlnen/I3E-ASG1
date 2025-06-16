@@ -1,3 +1,9 @@
+
+/*
+ * Author: Mio
+ * Date: 2025-06-15
+ * Description: Handles key collectible behavior including raycasting and collecting the key to unlock door
+ */
 using UnityEngine;
 
 public class Key : MonoBehaviour

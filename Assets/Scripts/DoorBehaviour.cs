@@ -1,3 +1,9 @@
+
+/*
+ * Author: Mio
+ * Date: 2025-06-15
+ * Description: Controls door behaviour, includes opening and closing and unlocking mechanic. door rotates 90 degree when opened and close after player walks away
+ */
 using UnityEngine;
 
 public class DoorBehaviour : MonoBehaviour

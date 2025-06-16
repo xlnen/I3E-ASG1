@@ -1,3 +1,9 @@
+
+/*
+ * Author: Mio
+ * Date: 2025-06-15
+ * Description: Causes damage over time to the player when inside the gas leak area
+ */
 using UnityEngine;
 
 public class GasleakBehaviour : MonoBehaviour
